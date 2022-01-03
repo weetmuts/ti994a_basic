@@ -1,5 +1,5 @@
 // Copyright Fredrik Ohrstrom 2012 oehrstroem@gmail.com
-// Licensed to you under the GNU Affero GPLv3 
+// Licensed to you under the GNU Affero GPLv3
 // http://www.gnu.org/licenses/agpl-3.0.html
 
 // Install getCursorPosition function into jquery.
@@ -25,7 +25,7 @@ var multi = 4;
 // Code setup run when page is loaded.
 $(function() {
     // List the source code
-    $('#list').click(function() { 
+    $('#list').click(function() {
           theprog = $('#programtext').val().replace(/\n/g,"<br>");
           theprog = theprog.replace(/ /g,"&nbsp;");
           $('#listing').html(theprog);
@@ -35,19 +35,19 @@ $(function() {
     });
 
     // Edit the source code
-    $('#edit').click(function() { 
+    $('#edit').click(function() {
           $('#editordiv').css('display','block');
           $('#listing').css('display','none');
           $('#abouttext').css('display','none');
     });
 
     // Download the compiled TIFILES binary of the program.
-    $('#download').click(function() { 
+    $('#download').click(function() {
         $('#vod').val("verify");
         // First verify the source.
-	$.post("http://nivelleringslikaren.eu/ti994a_basic/cmd_download.php",
+	$.post("cmd_download.php",
 	   $("#editor").serialize(),
-	   function(data){      
+	   function(data){
                if (data.indexOf("OK")==0) {
                    $('#vod').val("download");
 		   // Submit the editor explicitly so target="DummyDownload" is used,
@@ -59,15 +59,15 @@ $(function() {
 	   });
     });
 
-    $('#tape').click(function() { 
+    $('#tape').click(function() {
         $('#vod').val("verify");
         // First verify the source.
-	$.post("http://nivelleringslikaren.eu/ti994a_basic/cmd_download.php",
+	$.post("cmd_download.php",
 	   $("#editor").serialize(),
-	   function(data){      
+	   function(data){
                if (data.indexOf("OK")==0) {
                    $('#vod').val("hexify");
-	           $.post("http://nivelleringslikaren.eu/ti994a_basic/cmd_download.php",
+	           $.post("cmd_download.php",
 	                  $("#editor").serialize(),
                           playTape);
                }});});
@@ -83,14 +83,14 @@ $(function() {
             eof_offset = 256-eof_offset;
         }
         var len = (raw.length-128)-eof_offset;
-	var audio = new Audio(); 
-	var wave = new RIFFWAVE(); 
-	var data = []; 
+	var audio = new Audio();
+	var wave = new RIFFWAVE();
+	var data = [];
         var nrecs = Math.trunc(len / 64)+1;
         var ri = 128;
         var rec = [];
 
-	wave.header.sampleRate = 1379*2*multi; 
+	wave.header.sampleRate = 1379*2*multi;
 	wave.header.numChannels = 1;
 	wave.header.bitsPerSample = 8;
         var tuple = { i:0, v:0 }
@@ -100,7 +100,7 @@ $(function() {
         addByte(data, tuple, 255);
         addByte(data, tuple, nrecs);
         addByte(data, tuple, nrecs);
-        
+
         for (var r=0; r<nrecs; ++r) {
             for (var i=0; i<64; ++i) {
                 rec[i] = raw[ri];
@@ -108,7 +108,7 @@ $(function() {
             }
             addRecord(data, tuple, rec);
         }
-        
+
 	wave.Make(data);
 	audio.src = wave.dataURI;
 
@@ -139,7 +139,7 @@ $(function() {
         for (var i=0; i<multi; ++i)
 	    data[tuple.i++] = tuple.v;
         tuple.v = toggle(tuple.v);
-        for (var i=0; i<multi; ++i) 
+        for (var i=0; i<multi; ++i)
 	    data[tuple.i++] = tuple.v;
     }
 
@@ -154,7 +154,7 @@ $(function() {
             else addOne(data, tuple);
         }
     }
-    
+
     function addRecord(data, tuple, rec) {
         for (var c=0; c<2; ++c) {
             for (var i=0; i<8; ++i) addByte(data, tuple, 0);
@@ -167,7 +167,7 @@ $(function() {
             addByte(data, tuple, check&255);
         }
     }
-    
+
     var counter = 0;
     var interval;
 
@@ -187,7 +187,7 @@ $(function() {
     }
 
     function isHex(c) {
-	return (c=='0' || c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7' || c== '8' || c=='9' 
+	return (c=='0' || c=='1' || c=='2' || c=='3' || c=='4' || c=='5' || c=='6' || c=='7' || c== '8' || c=='9'
 		|| c=='A' || c=='B' || c=='C' || c=='D' || c=='E' || c=='F');
     }
 
@@ -220,10 +220,10 @@ $(function() {
     }
 
     function printPair(h,pos) {
-	return 
+	return
    	""+pH(h,pos+0)+pH(h,pos+1);
     }
-    
+
     function displayCharacterU(h,p) {
 	return ""+getBinFromHex(h,p+0)+getBinFromHex(h,p+1)+getBinFromHex(h,p+32)+getBinFromHex(h,p+33)+"\n"+
 	    getBinFromHex(h,p+2)+getBinFromHex(h,p+3)+getBinFromHex(h,p+34)+getBinFromHex(h,p+35)+"\n"+
@@ -274,7 +274,7 @@ $(function() {
 	  responseType: false,
 	  onChange: function(file, extension){},
 	  onSubmit: function(file, extension) {},
-	  onComplete: function(file, response) { 
+	  onComplete: function(file, response) {
 	      response = response
 		  .replace(/&lt;/g,'<')
 		  .replace(/&gt;/g,'>')
@@ -287,28 +287,24 @@ $(function() {
           }
       }
 
-    new AjaxUpload('#upload', upload_block);    
+    new AjaxUpload('#upload', upload_block);
 
     $('#debug').click(function() {
         // The test looks backwards, but it became checked, before entering
 	// the click handler, for the click that caused it to be checked....
         if ($('#debug').is(':checked')) {
-	    upload_block.data.debug = 'true'; 
-	    new AjaxUpload('#upload', upload_block);    
+	    upload_block.data.debug = 'true';
+	    new AjaxUpload('#upload', upload_block);
         } else {
 	    upload_block.data.debug = 'false';
-            new AjaxUpload('#upload', upload_block);    
+            new AjaxUpload('#upload', upload_block);
         }
     });
 
-    $('#about').click(function() { 
+    $('#about').click(function() {
           $('#abouttext').css('display','block');
           $('#editordiv').css('display','none');
           $('#listing').css('display','none');
     });
 
 });
-
-
-
-
